@@ -1,0 +1,13 @@
+<!doctype html>
+<title>Search auction</title>
+
+<form action='/auction/search'>
+    <input type='text' name='query' />
+    <button type='submit'>Search</button>
+</form>
+
+<ul>
+    {% for auction in auctions %}
+    <li><a href="/auction/{{ auction.id }}">{{ auction.title }}</a></li>
+    {% endfor %}
+</ul>

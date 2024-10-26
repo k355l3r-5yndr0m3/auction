@@ -1,0 +1,20 @@
+<!doctype html>
+<title>Title: {{ auction.title }}</title>
+
+<p>Title: {{ auction.title }}<p><br>
+<p>Description: {{ auction.description }}</p><br>
+
+{% if auction.bidder is not none %}
+<p>Current bidding {{ auction.bidding }} by {{ auction.bidder.username }}</p>
+{% endif %}
+
+{% if current_user.is_authenticated %}
+<form action='/api/auction/bid' method='POST'>
+    <input name='auction-id' type='hidden' value={{ auction.id }} />
+
+    <label for='bidding'>Your bidding:</label>
+    <input name='bidding' type='number' value=0 />
+
+    <button type='submit'>Place bid</button>
+</form>
+{% endif %}

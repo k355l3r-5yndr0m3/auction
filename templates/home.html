@@ -1,0 +1,27 @@
+{% if not current_user.is_authenticated %}
+<p>You are not logged in</p>
+<a href='/register'>Register</a><br>
+<a href='/login'>Login</a><br>
+
+{% else %}
+<p>You are {{ current_user.username }}</p><br>
+<a href='/logout'>Logout</a><br>
+
+<p>
+{% if current_user.userrole == 0 %}
+You are admin
+{% elif current_user.userrole == 1 %}
+You are bidder
+{% else %}
+You are seller
+{% endif %}
+</p>
+
+{% endif %}
+</p>
+
+{% if current_user.userrole == 2 %}
+<a href='/auction/add'>Add auction</a><br>
+{% endif %}
+<a href='/auction/search'>Search auctions</a><br>
+

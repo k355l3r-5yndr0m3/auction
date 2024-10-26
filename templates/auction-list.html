@@ -1,0 +1,8 @@
+<!doctype html>
+<title>This is the list of auctions</title>
+
+<ul>
+    {% for auction in auctions %}
+    <li><a href="/auction/{{ auction.id }}">{{ auction.title }}</a></li>
+    {% endfor %}
+</ul>

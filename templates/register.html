@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<form action='/api/register' method='post'>
+    <label for='username'>Username:</label>
+    <input type='text' name='username' />
+    <label for='password'>Password:</label>
+    <input type='text' name='password' />
+    <label for='userrole'>User role:</label>
+    <select name='userrole'>
+        <option value=0>Admin</option>
+        <option value=1>Bidder</option>
+        <option value=2>Seller</option>
+    </select>
+
+    <button type='submit'>Submit</button>
+</form>
