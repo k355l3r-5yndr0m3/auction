@@ -3,12 +3,15 @@
 
 <p>Title: {{ auction.title }}<p><br>
 <p>Description: {{ auction.description }}</p><br>
+<p>By {{ auction.seller.username }}</p><br>
 
 {% if auction.bidder is not none %}
 <p>Current bidding {{ auction.bidding }} by {{ auction.bidder.username }}</p>
 {% endif %}
 
 {% if current_user.is_authenticated %}
+
+{% if current_user.userrole == 1 %}
 <form action='/api/auction/bid' method='POST'>
     <input name='auction-id' type='hidden' value={{ auction.id }} />
 
@@ -18,3 +21,12 @@
     <button type='submit'>Place bid</button>
 </form>
 {% endif %}
+
+{% if current_user.userrole == 2 or current_user.userrole == 0 %}
+<a href='/api/auction/close'>Close auction</a>
+<a href='/api/auction/remove'>Auction remove</a>
+{% endif %}
+
+
+{% endif %}
+

@@ -48,6 +48,8 @@ class Auction(db.Model):
     seller_id: Mapped[int] = mapped_column(ForeignKey('User.id'))
     seller: Mapped[User] = relationship(foreign_keys=[seller_id])
 
+    currently_open: Mapped[bool] = mapped_column(nullable=False, default=True)
+
 
 with app.app_context():
     db.create_all()
@@ -76,7 +78,7 @@ def page_auction(auction_id):
         abort(404, "There is no such auction")
 
 @app.route('/auction/search')
-def page_search():
+def page_auction_search():
     query = request.args.get('query')
     if query is None:
         return render_template('auction-search.html', auctions=Auction.query.order_by(Auction.title).all())
@@ -97,6 +99,34 @@ def api_auction_add():
     db.session.add(auction)
     db.session.commit()
     return redirect(url_for('home'))
+
+@app.route('/api/auction/remove', methods=['POST'])
+def api_auction_remove():
+    if not (current_user.is_authenticated and current_user.userrole in {0, 2}):
+        abort(400, "Not a seller nor an admin")
+    if current_user.userrole == 2:
+        Auction.query.filter_by(id=request.form.get('auction-id', type=int), bidder_id=current_user.id).delete()
+    else:
+        Auction.query.filter_by(id=request.form.get('auction-id', type=int)).delete()
+    db.session.commit()
+    return redirect(url_for('home'))
+
+@app.route('/api/auction/close', methods=['POST'])
+def api_auction_close():
+    if not (current_user.is_authenticated and current_user.userrole in {0, 2}):
+        abort(400, "Not a seller nor admin")
+
+    auction = None
+    if current_user.userrole == 2:
+        auction = Auction.query.filter_by(id=request.form.get('auction-id'), bidder_id=current_user.id).first()
+    else:
+        auction = Auction.query.filter_by(id=request.form.get('auction-id')).first()
+    if auction is None:
+        abort(400, "No such auction")
+    auction.currently_open = False
+    db.session.commit()
+    return redirect(url_for('home'))
+
 
 @app.route('/api/auction/bid', methods=['POST'])
 def api_auction_bid():
@@ -130,6 +160,23 @@ def api_register():
     db.session.add(user)
     db.session.commit()
     return redirect(url_for("page_login"))
+
+@app.route('/user/<int:user_id>')
+def page_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        abort(400, "No user")
+    return render_template('user.html', user=user)
+
+@app.route('/user/search')
+def page_user_search():
+    query = request.args.get('query')
+    if query is None:
+        return render_template('user-search.html', users=User.query.order_by(User.username).all())
+    else:
+        users = User.query.filter(User.username.contains(query)).all()
+        return render_template('user-search.html', users=users)
+
 
 @app.route("/register")
 def page_register():

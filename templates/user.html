@@ -1,0 +1,10 @@
+<!doctype html>
+<title>User</title>
+<p>Username: {{ user.username }}</p>
+{% if user.userrole == 0 %}
+<p>Role: Admin</p>
+{% elif user.userrole == 1 %}
+<p>Role: Bidder</p>
+{% else %}
+<p>Role: Seller</p>
+{% endif %}
